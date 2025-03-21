@@ -1,0 +1,27 @@
+# Menu Title: Paste as Background
+# Shortcut: cmd+shift+B
+# Pega lo que hay en el portapapeles como fondo en el glifo activo
+
+import GlyphsApp
+from AppKit import NSPasteboard, NSStringPboardType
+
+font = Glyphs.font
+layer = font.selectedLayers[0]
+pasteboard = NSPasteboard.generalPasteboard()
+copiedData = pasteboard.stringForType_(NSStringPboardType)
+
+if not copiedData:
+    Message("No hay datos", "El portapapeles está vacío o no es compatible.")
+else:
+    tempLayer = GSLayer()
+    tempLayer.readFromClipboard()
+    
+    layer.background.paths = []
+    for path in tempLayer.paths:
+        layer.background.paths.append(path.copy())
+    
+    layer.background.components = []
+    for comp in tempLayer.components:
+        layer.background.components.append(comp.copy())
+    
+    Glyphs.showNotification("Pegado como fondo", "Se pegó en el background ✅")
